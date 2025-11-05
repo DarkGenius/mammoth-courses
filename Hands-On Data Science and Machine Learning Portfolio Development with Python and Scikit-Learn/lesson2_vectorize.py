@@ -2,17 +2,30 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
+from typing import Optional, TypedDict
+from scipy.sparse import csr_matrix
 
 # Явно указываем, что можно импортировать
 __all__ = [
     'process_text',
     'get_weights',
     'get_similarity',
-    'get_all_results'
+    'get_all_results',
+    'get_words_matrix'
 ]
 
 
-def _get_default_sentences():
+class ProcessTextResult(TypedDict):
+    """Типизированный словарь с результатами обработки текста."""
+    bag_of_words: pd.DataFrame
+    tfidf_matrix: pd.DataFrame
+    weights: pd.DataFrame
+    similarity: pd.DataFrame
+    feature_names: np.ndarray
+    words_matrix: csr_matrix
+
+
+def _get_default_sentences() -> list[str]:
     """Возвращает примеры предложений для обработки."""
     return [
         "Machine Learning (ML) is a core subfield of Artificial Intelligence (AI) that enables computers to learn patterns from data and improve their performance on a task over time—without being explicitly programmed. It is what powers recommendations on Netflix, fraud detection in banking, and language understanding in chatbots.",
@@ -28,7 +41,10 @@ def _get_default_sentences():
     ]
 
 
-def process_text(sentences=None, verbose=False):
+def process_text(
+    sentences: Optional[list[str]] = None, 
+    verbose: bool = False
+) -> ProcessTextResult:
     """
     Обрабатывает текстовые данные с использованием CountVectorizer и TF-IDF.
     
@@ -115,11 +131,12 @@ def process_text(sentences=None, verbose=False):
         "tfidf_matrix": dataframe_words_matrix,
         "weights": dataframe_weights,
         "similarity": dataframe_word_similarity,
-        "feature_names": feature_names
+        "feature_names": feature_names,
+        "words_matrix": words_matrix
     }
 
 
-def get_weights(sentences=None):
+def get_weights(sentences: Optional[list[str]] = None) -> pd.DataFrame:
     """
     Возвращает DataFrame с весами слов и их частотами.
     
@@ -134,7 +151,7 @@ def get_weights(sentences=None):
     return results["weights"]
 
 
-def get_similarity(sentences=None):
+def get_similarity(sentences: Optional[list[str]] = None) -> pd.DataFrame:
     """
     Возвращает матрицу косинусного сходства между словами.
     
@@ -149,7 +166,25 @@ def get_similarity(sentences=None):
     return results["similarity"]
 
 
-def get_all_results(sentences=None, verbose=False):
+def get_words_matrix(sentences: Optional[list[str]] = None) -> csr_matrix:
+    """
+    Возвращает матрицу слов.
+    
+    Args:
+        sentences (list, optional): Список предложений для обработки.
+            Если None, используются примеры по умолчанию.
+    
+    Returns:
+        np.ndarray: Матрица слов
+    """
+    results = process_text(sentences, verbose=False)
+    return results["words_matrix"]
+
+
+def get_all_results(
+    sentences: Optional[list[str]] = None, 
+    verbose: bool = False
+) -> ProcessTextResult:
     """
     Псевдоним для process_text. Возвращает все результаты обработки.
     
@@ -163,7 +198,7 @@ def get_all_results(sentences=None, verbose=False):
     return process_text(sentences, verbose)
 
 
-def main():
+def main() -> None:
     """Основная функция для запуска скрипта напрямую."""
     print("=" * 100)
     print("Обработка текстовых данных с векторизацией и TF-IDF")
