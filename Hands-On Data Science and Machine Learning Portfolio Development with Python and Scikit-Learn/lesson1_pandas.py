@@ -1,19 +1,29 @@
 import pandas as pd
 import numpy as np
 
-def main():
-    # Create a list of data
-    data = [
-        ["Neutral",  "This was fine."],
-        ["Neutral",  "This was OK."],
+__all__ = ["get_dataframe", "data"]
+
+data = [
+        ["Neutral", "This was fine."],
+        ["Neutral", "This was OK."],
+        
         ["Negative", "This was bad."],
         ["Negative", "I did not like this."],
+        
         ["Positive", "This was good."],
-        ["Positive", "I loved this."]
+        ["Positive", "I loved this."],
     ]
 
-    # Create a dataframe
+def prepare_data(data: list[list[str]]) -> pd.DataFrame:
     dataframe = pd.DataFrame(data, columns=["Label", "Review"])
+    return dataframe
+
+def get_dataframe() -> pd.DataFrame:
+    return prepare_data(data)
+
+def main():
+    # Create a dataframe
+    dataframe = get_dataframe()
     print("Dataframe:")
     print(dataframe)
     print("-" * 100)

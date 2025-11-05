@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from typing import Optional, TypedDict
 from scipy.sparse import csr_matrix
+from lesson1_pandas import get_dataframe
 
 # Явно указываем, что можно импортировать
 __all__ = [
@@ -27,18 +28,8 @@ class ProcessTextResult(TypedDict):
 
 def _get_default_sentences() -> list[str]:
     """Возвращает примеры предложений для обработки."""
-    return [
-        "Machine Learning (ML) is a core subfield of Artificial Intelligence (AI) that enables computers to learn patterns from data and improve their performance on a task over time—without being explicitly programmed. It is what powers recommendations on Netflix, fraud detection in banking, and language understanding in chatbots.",
-        "At its core, machine learning is about building systems that can: Ingest data, Identify patterns or structure, Make decisions or predictions, Improve with more data and experience",
-        "Arthur Samuel defined machine learning as the field of study that gives computers the ability to learn without being explicitly programmed.",
-        "Machine learning methods are typically divided into three major categories: supervised learning, unsupervised learning, and reinforcement learning.",
-        "Supervised learning is the machine learning task of learning a function that maps an input to a output based on example input-output pairs.",
-        "Unsupervised learning is the machine learning task of learning a function to map inputs to no labels based on example inputs without labeled outputs.",
-        "Reinforcement learning is the machine learning task of learning what action to take under what circumstances.",
-        "The process of learning from data is called training. A model that has been trained on a set of data is called a trained model.",
-        "A model that has not been trained on any data is called a model.",
-        "A model that has been trained on a set of data is called a trained model."
-    ]
+    reviews_df = get_dataframe()
+    return reviews_df["Review"].tolist()
 
 
 def process_text(
